@@ -14,17 +14,16 @@ class CommentBox extends Component {
     this.handleCommentUpdate = this.handleCommentUpdate.bind(this);
   }
 
-loadCommentsFromServer() {
+  loadCommentsFromServer(){
     $.ajax({
       method: 'GET',
       url: this.props.url
     })
-    .then((res) => {
-      this.setState({ data: res });
-    }, (err) => {
-      console.log('error', err)
+    .then(res => {
+      this.setState({ data: res.comments });
     })
   }
+
   handleCommentSubmit(comment) {
       let comments = this.state.data;
       comment.id = Date.now();
