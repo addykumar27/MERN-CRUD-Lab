@@ -15,7 +15,12 @@ var port = process.env.API_PORT || 3001;
 
 //db config
 //ADD YOUR INFO HERE!
-mongoose.connect('mongodb://<dbuser>:<dbpassword>@ds161210.mlab.com:61210/mern-comment-box');
+var dbUser = process.env.MLAB_DBUSER
+var dbPassword = process.env.MLAB_DBPASSWORD
+var databaseUri = 'mongodb://' + dbUser + ':' + dbPassword + '@ds131511.mlab.com:31511/mern-comment-box'
+mongoose.connect(databaseUri)
+
+mongodb://<dbuser>:<dbpassword>@ds131511.mlab.com:31511/mern-comment-box
 
 //config API to use bodyParser and look for JSON in req.body
 app.use(bodyParser.urlencoded({extended: true }));
@@ -46,6 +51,29 @@ router.route('/nuke').get(function(req,res){
 });
 
 //add /comments route to our /api router here
+
+router.route('/comments')
+  .get(function (req,res) {
+    Comment.find(function (error,comments) {
+      if (error)
+        res.send(error);
+      res.json(comments)
+
+    });
+  })
+
+  .post(function (req,res) {
+    var comment = new comment();
+    comment.author = req.body.author;
+    comment.text= req.body.text;
+
+    comment.save(function (error) {
+      if (error)
+        res.send(error);
+      res.json({message:'Comment successfully added'});
+
+    });
+  })
 
 //use router config when we call /API
 app.use('/api', router);
