@@ -63,7 +63,7 @@ router.route('/comments')
   })
 
   .post(function (req,res) {
-    var comment = new comment();
+    var comment = new Comment();
     comment.author = req.body.author;
     comment.text= req.body.text;
 
@@ -74,6 +74,30 @@ router.route('/comments')
 
     });
   })
+
+
+router.route('/comments/:comment_id')
+ .put(function(req, res) {
+   Comment.findById(req.params.comment_id, function(err, comment) {
+     if (err)
+       res.send(err);
+     (req.body.author) ? comment.author = req.body.author : null;
+     (req.body.text) ? comment.text = req.body.text : null;
+     comment.save(function(err) {
+       if (err)
+         res.send(err);
+       res.json({ message: 'Comment has been updated' });
+     });
+   });
+ })
+ //delete method for removing a comment from our database
+ .delete(function(req, res) {
+   Comment.remove({ _id: req.params.comment_id }, function(err, comment) {
+     if (err)
+       res.send(err);
+     res.json({ message: 'Comment has been deleted' })
+   })
+ });
 
 //use router config when we call /API
 app.use('/api', router);
